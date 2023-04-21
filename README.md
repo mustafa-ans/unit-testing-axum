@@ -29,10 +29,10 @@ POST /insert HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
 
-{
+`{
     "first_name": "John",
     "last_name": "Doe"
-}
+}`
 
 ### Retrieve user data
 
@@ -42,9 +42,9 @@ GET /user HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
 
-{
+`{
     "first_name": "John"
-}
+}`
 
 ### Project Structure
 
