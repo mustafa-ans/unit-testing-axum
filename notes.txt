@@ -1,0 +1,32 @@
+Router is a struct and each route given to it is mapped to a handler function
+When a request comes in, the appropriate function is called
+routing is a module in axum
+.route is used to add a new route
+
+std::net::SocketAddr means the SocketAddr type is in net module of standard library
+we are then method chaining the struct Socketaddr instance
+the serve 
+make service and serve are methods provided by axum::Server
+
+make service makes a service to handle requests, serve starts the Server
+expect method is used to panic and catch error if Result is error
+
+auth.rs:
+we use derive deserialize to allow us to convert a row returned by query into instance of the struct
+so when we fetch a row with the query, it will be convertedd to instance of the struct
+
+we used two different structs for get function, one for recieving the request body, the other for 
+sending the response body 
+
+fetch_optional returns at most one row if possible and is used when we need the result of the query
+.execute however is used to execute the given query and returns the number of rows affected
+
+pub async fn function() is the syntax 
+we use $ for arbitrary values then use bind(&credentials.field_name)
+
+we store the result from query into sqlx::query_as::<_, path to the struct>
+
+we jsonify using json! and then send the response by Ok(json(var))
+
+useful links for reference:
+https://medium.com/intelliconnect-engineering/using-axum-framework-to-create-rest-api-part-1-7d434d2c5de4
