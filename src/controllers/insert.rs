@@ -7,10 +7,10 @@ use crate::{
 };
 
 pub async fn register(
-    Json(credentials): Json<models::auth::User>,
+    Json(credentials): Json<models::credentials::User>,
     Extension(pool): Extension<PgPool>,
 ) -> Result<Json<Value>, String>{
-    let user = sqlx::query_as::<_,models::auth::User>(
+    let user = sqlx::query_as::<_,models::credentials::User>(
         "SELECT first_name, last_name FROM persons where first_name=$1",
     )
     .bind(&credentials.first_name)
@@ -39,10 +39,10 @@ pub async fn register(
 
 
 pub async fn get_user(
-    Json(credentials): Json<models::auth::First>,
+    Json(credentials): Json<models::credentials::First>,
     Extension(pool): Extension<PgPool>,
 ) -> Result<Json<Value>, String> {
-    let result = sqlx::query_as::<_, models::auth::User>(
+    let result = sqlx::query_as::<_, models::credentials::User>(
         "SELECT first_name, last_name FROM persons WHERE first_name=$1",
     )
     .bind(&credentials.first_name)
