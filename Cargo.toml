@@ -13,4 +13,12 @@ tokio = { version = "1.0", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tower-http = { version = "0.3.0", features = ["cors"] }
-sqlx = { version = "0.6", features = [ "runtime-tokio-rustls", "postgres", "json" ] }
+sqlx = { version = "0.6", features = [
+  "runtime-tokio-native-tls",
+  "postgres",
+  "json",
+  "bigdecimal",
+  "chrono",
+] }
+chrono = { version = "0.4.22", features = ["serde"] }
+sqlx-core = { version = "0.6", features = ["runtime-tokio-native-tls", "postgres"] }
