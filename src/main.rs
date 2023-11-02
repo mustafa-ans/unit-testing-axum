@@ -20,14 +20,18 @@ async fn main(){
         .expect("unable to make connection");
 
     let app = Router::new()
+        .route("/",get(|| async { "Sample API application for unit testing" }))
         .route("/user",get(get_user_handler))
         .layer(Extension(pool));
     
     
 
     let addr: std::net::SocketAddr = std::net::SocketAddr::from(([0,0,0,0],3000));
+    println!("Listening on {}", addr);
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .expect("failed to start server");
+
 }
