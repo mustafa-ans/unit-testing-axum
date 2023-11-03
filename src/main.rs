@@ -5,10 +5,8 @@ use axum::{
     Router,
     handler::Handler
 };
-
-use controllers::{get_user::get_user_handler, add_user::create_user};
 use sqlx::postgres::PgPoolOptions;
-
+use controllers::{get_user::get_user_handler, add_user::create_user};
 use crate::controllers::{edit_user::update_user, delete_user::delete_user};
 
 mod controllers;

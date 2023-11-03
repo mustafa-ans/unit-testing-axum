@@ -12,7 +12,7 @@ pub async fn create_user(
     Json(new_user): Json<NewUser>,
 ) -> Result<Json<Value>, String> {
     // Check if the username already exists
-    let username_exists = sqlx::query_scalar::<_, i32>(
+    let username_exists = sqlx::query_scalar::<_, i64>(
         "SELECT COUNT(*) FROM Users WHERE Username = $1",
     )
     .bind(&new_user.username)
@@ -72,7 +72,8 @@ async fn _check_username_uniqueness(
     })?;
 
     if username_exists > 0 {
-        return Err("Username already exists. Please choose a unique username.".to_string());
+        // return json response
+        return Ok(Json(json!({"message": "Username already exists. Please choose a unique username."})));
     }
 
     Ok(Json(json!({"message": "Username is unique."})))
@@ -88,7 +89,7 @@ mod tests{
 
     #[tokio::test]
     async fn check_database_connectivity(){
-        let durl = std::env::var("DATABASE_URL_ONLINE").expect("set DATABASE_URL env variable");
+        let durl = std::env::var("DATABASE_URL_ONLIN").expect("set DATABASE_URL env variable");
 
         let pool = PgPoolOptions::new()
             .max_connections(5)
@@ -115,8 +116,10 @@ mod tests{
 
     #[tokio::test]
     async fn test_create_user_route(){
-        let _pool = create_connection_pool().await;
-        let app = post(create_user);
+        let pool = create_connection_pool().await;
+        let app = Router::new()
+            .route("/add-users",post(create_user))
+            .layer(Extension(pool));
 
         let req = Request::builder()
             .method(Method::POST)
@@ -127,7 +130,7 @@ mod tests{
                     "username": "testuser",
                     "first_name": "Test",
                     "last_name": "User",
-                    "email": "",
+                    "email": "test@mail",
                     "birthdate": "2020-01-01"
                 }"#,
             ))
@@ -166,7 +169,8 @@ mod tests{
             .await
             .unwrap();
 
-        // assert_eq!(response.status(),200);
+        // check if the response is 200
+        assert_eq!(response.status(),200);
 
         // assert the username is unique from the response 
         let body_bytes = hyper::body::to_bytes(response.into_body())
