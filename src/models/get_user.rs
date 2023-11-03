@@ -9,8 +9,8 @@ pub struct User {
     pub lastname: String,
     pub email: String,
     pub birthdate: NaiveDate,
-    pub createdat: NaiveDateTime,
-    pub updatedat: NaiveDateTime,
+    pub createdate: NaiveDateTime,
+    pub updatedate: NaiveDateTime,
 }
 
 #[derive(Deserialize, sqlx::FromRow)]

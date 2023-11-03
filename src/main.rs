@@ -1,13 +1,15 @@
 #![allow(unused_imports)]
 use axum::{
     extract::Extension,
-    routing::{get,post, delete, put},
+    routing::{get,post, delete, put, delete_service},
     Router,
     handler::Handler
 };
 
 use controllers::{get_user::get_user_handler, add_user::create_user};
 use sqlx::postgres::PgPoolOptions;
+
+use crate::controllers::{edit_user::update_user, delete_user::delete_user};
 
 mod controllers;
 mod models;
@@ -26,6 +28,8 @@ async fn main(){
         .route("/",get(|| async { "Sample API application for unit testing" }))
         .route("/get-users",get(get_user_handler))
         .route("/add-users",post(create_user))
+        .route("/update-users",put(update_user))
+        .route("/delete-users",delete(delete_user))
         .layer(Extension(pool));
     
     

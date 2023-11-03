@@ -1,16 +1,14 @@
-use axum::{Extension,Json};
+use axum::{Extension,Json, extract::Query};
 use chrono::NaiveDate;
-use serde::Deserialize;
 use serde_json::{json,Value};
 use sqlx::PgPool;
-use crate::models;
-
-use super::add_user::NewUser;
+use crate::models::{self, delete_user::DeleteUser};
 
 
-pub async fn _delete_user(
-    Json(update_user): Json<NewUser>,
+
+pub async fn delete_user(
     Extension(pool): Extension<PgPool>,
+    Query(update_user): Query<DeleteUser>,
 ) -> Result<Json<Value>, String> {
     // Check if the user with the given username exists
     let user_exists = sqlx::query_scalar::<_, i32>(

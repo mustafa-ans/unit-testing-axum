@@ -1,18 +1,10 @@
 use axum::{Extension,Json};
 use chrono::NaiveDate;
-use serde::Deserialize;
 use serde_json::{json,Value};
 use sqlx::PgPool;
-use crate::models;
+use crate::models::{self, add_user::NewUser};
 
-#[derive(Deserialize)]
-pub struct NewUser {
-    pub username: String,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub email: Option<String>,
-    pub birthdate: Option<NaiveDate>,
-}
+
 
 
 pub async fn create_user(
@@ -67,7 +59,7 @@ async fn _check_username_uniqueness(
     Json(new_user): Json<NewUser>,
 ) -> Result<Json<Value>, String> {
     // Check if the username already exists
-    let username_exists = sqlx::query_scalar::<_, i32>(
+    let username_exists = sqlx::query_scalar::<_, i64>(
         "SELECT COUNT(*) FROM Users WHERE Username = $1",
     )
     .bind(&new_user.username)
@@ -94,6 +86,21 @@ mod tests{
     use tower::util::ServiceExt;
     use super::*;
 
+    #[tokio::test]
+    async fn check_database_connectivity(){
+        let durl = std::env::var("DATABASE_URL_ONLINE").expect("set DATABASE_URL env variable");
+
+        let pool = PgPoolOptions::new()
+            .max_connections(5)
+            .connect(&durl)
+            .await
+            .expect("unable to make connection");
+
+        // assert to check if connection is successful
+        assert_eq!(pool.is_closed(),false);
+
+    }
+
     async fn create_connection_pool() -> PgPool{
         let durl = std::env::var("DATABASE_URL_ONLINE").expect("set DATABASE_URL env variable");
 
@@ -108,7 +115,7 @@ mod tests{
 
     #[tokio::test]
     async fn test_create_user_route(){
-        let pool = create_connection_pool().await;
+        let _pool = create_connection_pool().await;
         let app = post(create_user);
 
         let req = Request::builder()
@@ -149,7 +156,7 @@ mod tests{
             .header("content-type", "application/json")
             .body(Body::from(
                 r#"{
-                    "username": "testuser"
+                    "username": "johndoe87"
                 }"#,
             ))
             .unwrap();
@@ -162,9 +169,17 @@ mod tests{
         // assert_eq!(response.status(),200);
 
         // assert the username is unique from the response 
-        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
-        let body = String::from_utf8(body.to_vec()).unwrap();
-        let body: Value = serde_json::from_str(&body).unwrap();
+        let body_bytes = hyper::body::to_bytes(response.into_body())
+            .await
+            .expect("Failed to read response body");
+    
+        let body_str = String::from_utf8(body_bytes.to_vec())
+            .expect("Failed to convert body to string");
+
+        let body: Value = serde_json::from_str(&body_str)
+            .expect("Failed to parse JSON");
+
+        println!("{:?}",body);
         assert_eq!(body["message"], "Username is unique.");
 
 

@@ -3,14 +3,13 @@ use chrono::NaiveDate;
 use serde::Deserialize;
 use serde_json::{json,Value};
 use sqlx::PgPool;
-use crate::models;
-
-use super::add_user::NewUser;
+use crate::models::{self, edit_user::UpdateUser};
 
 
-pub async fn _update_user(
-    Json(update_user): Json<NewUser>,
+
+pub async fn update_user(
     Extension(pool): Extension<PgPool>,
+    Json(update_user): Json<UpdateUser>,
 ) -> Result<Json<Value>, String> {
     // Check if the user with the given username exists
     let user_exists = sqlx::query_scalar::<_, i32>(
