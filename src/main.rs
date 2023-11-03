@@ -1,9 +1,12 @@
+#![allow(unused_imports)]
 use axum::{
     extract::Extension,
-    routing::{get,post},
-    Router};
+    routing::{get,post, delete, put},
+    Router,
+    handler::Handler
+};
 
-use controllers::insert::get_user_handler;
+use controllers::{get_user::get_user_handler, add_user::create_user};
 use sqlx::postgres::PgPoolOptions;
 
 mod controllers;
@@ -21,7 +24,8 @@ async fn main(){
 
     let app = Router::new()
         .route("/",get(|| async { "Sample API application for unit testing" }))
-        .route("/user",get(get_user_handler))
+        .route("/get-users",get(get_user_handler))
+        .route("/add-users",post(create_user))
         .layer(Extension(pool));
     
     

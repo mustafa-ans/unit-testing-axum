@@ -23,3 +23,4 @@ sqlx = { version = "0.6", features = [
 ] }
 chrono = { version = "0.4.22", features = ["serde"] }
 sqlx-core = { version = "0.6", features = ["runtime-tokio-native-tls", "postgres"] }
+hyper = "0.14.10"
